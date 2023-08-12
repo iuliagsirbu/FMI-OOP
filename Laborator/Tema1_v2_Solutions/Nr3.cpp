@@ -49,9 +49,14 @@ class Proprietar {
 
 public:
     Proprietar() {}
-    Proprietar(const std::string &nume_, const Data& data_nast) : nume(nume_), data_nasterii(data_nast) {}
-    Proprietar(const std::string &nume_, int zi_, const std::string &luna_, int an_) : nume(nume_), data_nasterii(zi_, luna_, an_) {}
+
+    Proprietar(const std::string &nume_, const Data &data_nast) : nume(nume_), data_nasterii(data_nast) {}
+
+    Proprietar(const std::string &nume_, int zi_, const std::string &luna_, int an_) : nume(nume_),
+                                                                                       data_nasterii(zi_, luna_, an_) {}
+
     friend std::istream &operator>>(std::istream &in, Proprietar &propr);
+
     friend std::ostream &operator<<(std::ostream &out, Proprietar &propr);
 };
 
@@ -72,25 +77,34 @@ class Casa {
 
 public:
     Casa() : oras("-"), nrProprietari(0) {}
-    explicit Casa(const std::string& oras_) : oras(oras_), nrProprietari(0) {}
-    Casa(const std::string& oras_, int nrProp_) : oras(oras_), nrProprietari(nrProp_) {}
-    Casa(const std::string& oras_, int nrProp_, std::vector<Proprietar> Prop_) : oras(oras_), nrProprietari(nrProp_), Prop(Prop_) {}
+
+    explicit Casa(const std::string &oras_) : oras(oras_), nrProprietari(0) {}
+
+    Casa(const std::string &oras_, int nrProp_) : oras(oras_), nrProprietari(nrProp_) {}
+
+    Casa(const std::string &oras_, int nrProp_, std::vector<Proprietar> Prop_) : oras(oras_), nrProprietari(nrProp_),
+                                                                                 Prop(Prop_) {}
+
     friend std::istream &operator>>(std::istream &in, Casa &casa);
+
     friend std::ostream &operator<<(std::ostream &out, Casa &casa);
+
     Casa &operator=(const Casa &other);
+
+    Casa &operator+=(const Proprietar &propr);
 };
 
 std::istream &operator>>(std::istream &in, Casa &casa) {
     in >> casa.oras >> casa.nrProprietari;
     casa.Prop.resize(casa.nrProprietari);
-    for(int i=0;i<casa.nrProprietari;i++)
+    for (int i = 0; i < casa.nrProprietari; i++)
         in >> casa.Prop[i];
     return in;
 }
 
 std::ostream &operator<<(std::ostream &out, Casa &casa) {
-    out << "Casa se afla in: " << casa.oras <<", are " << casa.nrProprietari << " proprietari: \n";
-    for(int i=0;i<casa.nrProprietari;i++)
+    out << "Casa se afla in: " << casa.oras << ", are " << casa.nrProprietari << " proprietari: \n";
+    for (int i = 0; i < casa.nrProprietari; i++)
         out << "\t-" << casa.Prop[i];
     return out;
 }
@@ -104,6 +118,12 @@ Casa &Casa::operator=(const Casa &other) {
     return *this;
 }
 
+Casa &Casa::operator+=(const Proprietar &propr) {
+    nrProprietari++;
+    Prop.push_back(propr);
+    return *this;
+}
+
 int main() {
     Data d1(15, "iulie", 1975), d2 = d1;
     std::cout << d1 << "\n";
@@ -112,6 +132,10 @@ int main() {
     std::cout << p1;
     std::cout << p2;
     Casa c1("Bucuresti"), c2;
+    std::cout << c1 << "\n";
+    c1 += p1;
+    c1 += p2;
+    std::cout << c1 << "\n";
     std::cin >> c2;
 //    std::cout << c1;
     Casa c3 = c2;
